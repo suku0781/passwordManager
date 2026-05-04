@@ -18,7 +18,6 @@ gen/
 Thumbs.db
 
 # --- 설정, 비밀 정보 ---
-src/main/resources/application.properties
 src/main/resources/application.yml
 *.log
 
