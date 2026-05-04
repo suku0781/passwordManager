@@ -3,10 +3,10 @@ package com.shk.personalProject.passwordManager.vault.controller;
 import com.shk.personalProject.passwordManager.domain.User;
 import com.shk.personalProject.passwordManager.domain.VaultEntry;
 import com.shk.personalProject.passwordManager.domain.VaultEntryRepository;
-import com.shk.personalProject.passwordManager.vault.dto.VaultResponse;
-import com.shk.personalProject.passwordManager.vault.dto.VaultSaveRequest;
-import com.shk.personalProject.passwordManager.vault.dto.VaultSummary;
+import com.shk.personalProject.passwordManager.vault.dto.*;
 import com.shk.personalProject.passwordManager.vault.service.VaultService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "금고", description = "AES-256 암호화 계정 정보 관리")
 @RestController // Json데이터를 주고 받는 입구 라고 선언.
 @RequestMapping("/api/vault")
 @RequiredArgsConstructor // final로 선언된 VaultService를 스프링이 자동으로 연결(주입).
@@ -27,6 +28,7 @@ public class VaultController {
      * @Valid : @RequestBody 어노테이션 옆에 작성 시 RequestBody로 들엉는 객체에 대한 검증을 수행. 검증의 세부사항은 객체 안에 정의해 두어야 함.
      */
 
+    @Operation(summary = "계정 저장", description = "AES-256-GCM으로 암호화 하여 저장")
     @PostMapping
     public ResponseEntity<String> save(@AuthenticationPrincipal UserDetails userDetails,
                                        @Valid @RequestBody VaultSaveRequest request) {
@@ -35,14 +37,23 @@ public class VaultController {
     }
 
     // 단건 조회 요청(/api/vault?siteUrl=naver.com)
+    @Operation(summary = "계정 조회", description = "복호화하여 반환")
     @GetMapping
     public ResponseEntity<VaultResponse> get(@AuthenticationPrincipal UserDetails userDetails,
                                              @RequestParam String siteUrl) {
         return ResponseEntity.ok(vaultService.get(userDetails.getUsername(), siteUrl));
     }
 
+    @Operation(summary = "저장된 사이트 목록")
     @GetMapping("/list")
     public ResponseEntity<List<VaultSummary>> getList(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(vaultService.getList(userDetails.getUsername()));
+    }
+
+    @Operation(summary = "비밀번호 자동 생성", description = "사이트 정책에 따라 비밀번호 생성")
+    @PostMapping("/generate")
+    public ResponseEntity<PasswordGenerateResponse> generate(
+            @Valid @RequestBody PasswordGenerateRequest request) {
+        return ResponseEntity.ok(vaultService.generatePassword(request.getSiteUrl()));
     }
 }

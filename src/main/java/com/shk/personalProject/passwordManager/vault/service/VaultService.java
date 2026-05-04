@@ -4,7 +4,10 @@ import com.shk.personalProject.passwordManager.domain.User;
 import com.shk.personalProject.passwordManager.domain.UserRepository;
 import com.shk.personalProject.passwordManager.domain.VaultEntry;
 import com.shk.personalProject.passwordManager.domain.VaultEntryRepository;
+import com.shk.personalProject.passwordManager.policy.dto.PolicyAnalysisResult;
+import com.shk.personalProject.passwordManager.policy.service.PolicyService;
 import com.shk.personalProject.passwordManager.vault.crypto.AesEncryptionService;
+import com.shk.personalProject.passwordManager.vault.dto.PasswordGenerateResponse;
 import com.shk.personalProject.passwordManager.vault.dto.VaultResponse;
 import com.shk.personalProject.passwordManager.vault.dto.VaultSaveRequest;
 import com.shk.personalProject.passwordManager.vault.dto.VaultSummary;
@@ -21,6 +24,8 @@ public class VaultService {
     private final VaultEntryRepository vaultEntryRepository;
     private final UserRepository userRepository;
     private final AesEncryptionService aesEncryptionService;
+    private final PolicyService policyService;
+    private final PasswordGeneratorService passwordGeneratorService;
 
     @Transactional
     public void save(String email, VaultSaveRequest request){
@@ -75,6 +80,16 @@ public class VaultService {
                 .stream()
                 .map(VaultSummary::new)
                 .toList();
+    }
+
+    public PasswordGenerateResponse generatePassword(String siteUrl) {
+        // 1. 정책 분석 (캐시 히트 시 즉시 반환)
+        PolicyAnalysisResult policy = policyService.analyzePolicy(siteUrl);
+
+        // 2. 정책 기반 비밀번호 생성
+        String password = passwordGeneratorService.generate(policy);
+
+        return new PasswordGenerateResponse(siteUrl, password, policy);
     }
 }
 

@@ -29,7 +29,9 @@ public class SecurityConfig {
                         "/api/auth/**",
                         "/api/policy/**",
                         "/swagger-ui/**",
-                        "/v3/api-docs/**"
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs.yarm"
                         ).permitAll()
                         .anyRequest()
                         .authenticated()
