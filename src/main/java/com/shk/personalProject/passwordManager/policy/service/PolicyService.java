@@ -51,13 +51,16 @@ public class PolicyService {
 
             if(isCrowlFailed(analysisJson)) throw new RuntimeException("크롤링 실패");
         } catch (Exception e) {
-            // 3. gemini가 알고 있는 정보로 추론
+            /*// 3. gemini가 알고 있는 정보로 추론
             log.warn("크롤링 실패, Gemini 추론으로 전환. {}", siteUrl);
             analysisJson = buildAgent().analyzePolicyFromText("""
                     웹 크롤링 없이 당신이 알고 있는 정보만으로
                     %s 사이트의 비밀번호 정책을 JSON으로 반환해주세요.
                     모르면 일반적인 기본값으로 반환하세요.
                     """.formatted(siteUrl));
+            analysisJson = cleaningMd(analysisJson);*/
+            log.warn("크롤링 실패. Gemini 지식 기반으로 전환. {}", siteUrl);
+            analysisJson = buildAgent().analyzePolicyFromKnowledge(siteUrl  +" 사이트 비밀번호 정책");
             analysisJson = cleaningMd(analysisJson);
         }
 
