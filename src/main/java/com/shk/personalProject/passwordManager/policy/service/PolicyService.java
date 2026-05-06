@@ -57,7 +57,7 @@ public class PolicyService {
                     웹 크롤링 없이 당신이 알고 있는 정보만으로
                     %s 사이트의 비밀번호 정책을 JSON으로 반환해주세요.
                     모르면 일반적인 기본값으로 반환하세요.
-                    """ + siteUrl);
+                    """.formatted(siteUrl));
             analysisJson = cleaningMd(analysisJson);
         }
 
