@@ -21,7 +21,7 @@ public class SwaggerConfig {
                 .name("Authorization");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("basicAuth");
+                .addList("bearerAuth");
 
         return new OpenAPI().info(
                 new Info().title("AI 비밀번호 매니저 API")
