@@ -66,7 +66,6 @@ public class PolicyService {
                 CACHE_TTL_HOURS,
                 TimeUnit.HOURS
         );
-
         return parseResult(analysisJson);
     }
 

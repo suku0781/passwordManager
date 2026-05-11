@@ -31,20 +31,24 @@ public interface PasswordPolicyAgent {
 
     // 추가 - 크롤링 없이 Gemini 지식으로만
     @SystemMessage("""
-        당신은 웹사이트 비밀번호 정책 전문가입니다.
-        크롤링 없이 당신이 알고 있는 지식만으로 답하세요.
-        반드시 아래 JSON 형식으로만 응답하세요.
-        다른 텍스트, 설명, 마크다운은 절대 포함하지 마세요.
-        
+        You are a website password policy expert.
+        Answer only from your knowledge without crawling.
+    
+        Even if you don't know the exact policy, you MUST infer reasonable values
+        based on the site type and scale. Never default everything to false or null.
+        Portal/SNS/financial sites have high security requirements.
+    
+        Return ONLY valid JSON without any explanation or markdown.
+    
         {
-          "minLength": 숫자,
-          "maxLength": 숫자 또는 null,
+          "minLength": number,
+          "maxLength": number or null,
           "requireUppercase": true/false,
           "requireLowercase": true/false,
           "requireNumber": true/false,
           "requireSpecial": true/false,
-          "allowedSpecialChars": "허용된 특수문자 문자열 또는 null",
-          "notes": "기타 특이사항 또는 null"
+          "allowedSpecialChars": "allowed special chars string or null",
+          "notes": null
         }
         """)
     String analyzePolicyFromKnowledge(@UserMessage String siteName);
