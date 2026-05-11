@@ -33,6 +33,11 @@ public class PolicyService {
                 .build();
     }
 
+    private PasswordPolicyAgent buildFallbackAgent() {
+        return AiServices.builder(PasswordPolicyAgent.class)
+                .chatLanguageModel(chatLanguageModel)
+                .build();
+    }
     public PolicyAnalysisResult analyzePolicy(String siteUrl) {
         // 1. Redis 캐시 확인
         String cached = redisTemplate.opsForValue().get(CACHE_PREFIX + siteUrl);
@@ -53,7 +58,7 @@ public class PolicyService {
             if(isCrowlFailed(analysisJson)) throw new RuntimeException("크롤링 실패");
         } catch (Exception e) {
             log.warn("크롤링 실패. Gemini 지식 기반으로 전환. {}", siteUrl);
-            analysisJson = buildAgent().analyzePolicyFromKnowledge(siteUrl  +" 사이트 비밀번호 정책");
+            analysisJson = buildFallbackAgent().analyzePolicyFromKnowledge(siteUrl  +" 사이트 비밀번호 정책");
             analysisJson = cleaningMd(analysisJson);
         }
 

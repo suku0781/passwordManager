@@ -45,7 +45,7 @@ public interface PasswordPolicyAgent {
           "maxLength": number or null,
           "requireUppercase": true/false,
           "requireLowercase": true/false,
-          "requireNumber": true/false,
+          "requireNumber": true/false,1
           "requireSpecial": true/false,
           "allowedSpecialChars": "allowed special chars string or null",
           "notes": null
